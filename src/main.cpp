@@ -12,6 +12,9 @@
 // for convenience
 using json = nlohmann::json;
 
+const double Lf = 2.67;
+const double dt = 0.05;
+
 // For converting back and forth between radians and degrees.
 constexpr double pi() { return M_PI; }
 double deg2rad(double x) { return x * pi() / 180; }
@@ -105,6 +108,8 @@ int main()
 								const double py = j[1]["y"];
 								const double psi = j[1]["psi"];
 								const double v = j[1]["speed"];
+								const double delta = j[1]["steering_angle"];
+								const double a = j[1]["throttle"];
 
 								const double psi_sin = sin(psi);
 								const double psi_cos = cos(psi);
@@ -121,11 +126,17 @@ int main()
 								const Eigen::VectorXd coeffs = polyfit(xvals, yvals, 3);
 
 								const double cte = polyeval(coeffs, 0);
-								const double oe = -atan(coeffs[1]);
-								cout << "Errors: cte=" << cte << " oe=" << oe << std::endl;
+								const double epsi = -atan(coeffs[1]);
+
+								const double pred_px = v * dt;
+								const double pred_py = 0.0;
+								const double pred_psi = -v * delta / Lf * dt;
+								const double pred_v = v + a * dt;
+								const double pred_cte = cte + v * sin(epsi) * dt;
+								const double pred_epsi = epsi - v * delta / Lf * dt;
 
 								Eigen::VectorXd state(6);
-								state << 0, 0, 0, v, cte, oe;
+								state << pred_px, pred_py, pred_psi, pred_v, pred_cte, pred_epsi;
 
 								// Use MPC to calculate steering and throttle
 								const vector<double> result = mpc.Solve(state, coeffs);
@@ -135,7 +146,7 @@ int main()
 								json msgJson;
 								// NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
 								// Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].
-								msgJson["steering_angle"] = steer_value;
+								msgJson["steering_angle"] = -steer_value / deg2rad(25);
 								msgJson["throttle"] = throttle_value;
 
 								//Display the MPC predicted trajectory
