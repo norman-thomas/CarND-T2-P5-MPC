@@ -24,7 +24,9 @@ The model takes the values of its current state and previous actuations to calcu
 ## Timestep Length and Elapsed Duration (N & dt)
 > Student discusses the reasoning behind the chosen N (timestep length) and dt (elapsed duration between timesteps) values. Additionally the student details the previous values tried.
 
-After trying a couple of values for `N` and `dt` I switched from `N=10` and `dt=0.1` to `N=20` and `dt=0.05` to cover the same prediction range, but at a higher resolution. While computationally more expensive, I felt the model worked a bit smoother than before.
+After trying a couple of values for `N` and `dt` I sticked to `N=10` and `dt=0.1`.
+
+I also tried higher resolutions by setting `dt=0.05` and longer prediction-ranges by setting `N=30`. The higher resolution did not improve the results significantly. Furthermore, increasing `N` was rather detrimental, because errors in the distant had to be considered, which impaired the performance of the optimization, i.e. the result was worse.
 
 
 ## Polynomial Fitting and MPC Preprocessing
@@ -36,3 +38,4 @@ The waypoints were transformed to vehicle coordinate system and the fit to a 3rd
 ## Model Predictive Control with Latency
 > The student implements Model Predictive Control that handles a 100 millisecond latency. Student provides details on how they deal with latency.
 
+I incorporated the latency by computing the predicted state for the next time step (`dt=0.1` i.e. 100ms later) and passing the predicted state to the optimizer.
