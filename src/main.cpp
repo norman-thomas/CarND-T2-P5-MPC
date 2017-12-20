@@ -13,7 +13,7 @@
 using json = nlohmann::json;
 
 const double Lf = 2.67;
-const double dt = 0.05;
+const double dt = 0.1;
 
 // For converting back and forth between radians and degrees.
 constexpr double pi() { return M_PI; }
@@ -121,8 +121,8 @@ int main()
 									ptsy[i] = -dx * psi_sin + dy * psi_cos;
 								}
 
-								Eigen::Map<Eigen::VectorXd> xvals(ptsx.data(), ptsx.size());
-								Eigen::Map<Eigen::VectorXd> yvals(ptsy.data(), ptsy.size());
+								const Eigen::Map<Eigen::VectorXd> xvals(ptsx.data(), ptsx.size());
+								const Eigen::Map<Eigen::VectorXd> yvals(ptsy.data(), ptsy.size());
 								const Eigen::VectorXd coeffs = polyfit(xvals, yvals, 3);
 
 								const double cte = polyeval(coeffs, 0);
