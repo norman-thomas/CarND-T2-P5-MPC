@@ -39,3 +39,6 @@ The waypoints were transformed to vehicle coordinate system and the fit to a 3rd
 > The student implements Model Predictive Control that handles a 100 millisecond latency. Student provides details on how they deal with latency.
 
 I incorporated the latency by computing the predicted state for the next time step (`dt=0.1` i.e. 100ms later) and passing the predicted state to the optimizer.
+
+![Video](images/video.gif "Video")
+
